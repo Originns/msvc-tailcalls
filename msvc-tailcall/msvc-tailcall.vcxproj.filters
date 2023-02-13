@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="msvc-tailcall.c">
+    <ClCompile Include="msvc-tailcall.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="..\minhook\src\buffer.c">
@@ -63,6 +63,9 @@
     </ClInclude>
     <ClInclude Include="..\minhook\src\trampoline.h">
       <Filter>Ressourcendateien</Filter>
+    </ClInclude>
+    <ClInclude Include="args.h">
+      <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

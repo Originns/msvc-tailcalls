@@ -136,7 +136,7 @@
     <ClCompile Include="..\minhook\src\hde\hde64.c" />
     <ClCompile Include="..\minhook\src\hook.c" />
     <ClCompile Include="..\minhook\src\trampoline.c" />
-    <ClCompile Include="msvc-tailcall.c" />
+    <ClCompile Include="msvc-tailcall.cpp" />
   </ItemGroup>
   <ItemGroup>
     <MASM Include="tailcall.asm" />
@@ -150,6 +150,7 @@
     <ClInclude Include="..\minhook\src\hde\table32.h" />
     <ClInclude Include="..\minhook\src\hde\table64.h" />
     <ClInclude Include="..\minhook\src\trampoline.h" />
+    <ClInclude Include="args.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

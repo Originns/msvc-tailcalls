@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <intrin.h>
+#include "args.h"
 
 #include <MinHook.h>
 
@@ -14,26 +15,17 @@ EXTERN_C __declspec(noinline) int myfunction(int a1, int a2, int a3, int a4, int
     return a1 + a2 + a3 + a4 + a5;
 }
 
-EXTERN_C VOID pHookfunc(int *rcx_ptr, int *rdx_ptr, int *r8_ptr, int *r9_ptr, void *rsp,
-                        void *ret_addr, int rcx, int rdx, int r8, int r9, int stack_arg1)
+EXTERN_C VOID pHookfunc(Arguments<5> *args)
 {
-    printf("rcx ptr value: %d\n", *rcx_ptr);
-    printf("rdx ptr value: %d\n", *rdx_ptr);
-    printf("r8 ptr value: %d\n", *r8_ptr);
-    printf("r9 ptr value: %d\n", *r9_ptr);
+    printf("rcx value: %d\n", *args->get<int>(0));
+    printf("rdx value: %d\n", *args->get<int>(1));
+    printf("r8 value: %d\n", *args->get<int>(2));
+    printf("r9 value: %d\n", *args->get<int>(3));
+    printf("stack value: %d\n", *args->get<int>(4));
 
-    *rcx_ptr = 9;
+    args->set(0, 9);
 
-    printf("rsp: %p\n", rsp);
-    printf("ret from rsp: %p\n", *(LPVOID *)rsp);
-
-    printf("ret addr: %p\n", ret_addr);
-
-    printf("rcx: %d\n", rcx);
-    printf("rdx: %d\n", rdx);
-    printf("r8: %d\n", r8);
-    printf("r9: %d\n", r9);
-    printf("stack arg1: %d\n", stack_arg1);
+    printf("rcx new value: %d\n", *args->get<int>(0));
 }
 
 int main()
