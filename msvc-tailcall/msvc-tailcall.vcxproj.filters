@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="msvc-tailcall.cpp">
+    <ClCompile Include="msvc-tailcall.c">
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="..\minhook\src\buffer.c">

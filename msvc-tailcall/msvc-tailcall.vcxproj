@@ -136,7 +136,7 @@
     <ClCompile Include="..\minhook\src\hde\hde64.c" />
     <ClCompile Include="..\minhook\src\hook.c" />
     <ClCompile Include="..\minhook\src\trampoline.c" />
-    <ClCompile Include="msvc-tailcall.cpp" />
+    <ClCompile Include="msvc-tailcall.c" />
   </ItemGroup>
   <ItemGroup>
     <MASM Include="tailcall.asm" />

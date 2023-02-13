@@ -7,27 +7,14 @@
 
 #include <MinHook.h>
 
-__declspec(noinline) int donothing(int a1)
-{
-    return a1 + 1;
-}
-
-EXTERN_C __declspec(noinline) int myfunction(int a1, int a2, int a3, int a4, int a5)
-{
-    int p = donothing(a1);
-    int c = donothing(p);
-
-    p += donothing(a2);
-
-    p -= donothing(a3);
-
-    c += donothing(a4);
-
-    return donothing(a5) + p;
-}
-
 EXTERN_C VOID tailStub();
 EXTERN_C LPVOID pOriginal = NULL;
+
+#pragma optimize("", off)
+EXTERN_C __declspec(noinline) int myfunction(int a1, int a2, int a3, int a4, int a5)
+{
+    return a1 + a2 + a3 + a4 + a5;
+}
 
 EXTERN_C VOID pHookfunc(int *rcx_ptr, int *rdx_ptr, int *r8_ptr, int *r9_ptr, void *rsp,
                         void *ret_addr, int rcx, int rdx, int r8, int r9, int stack_arg1)
@@ -51,7 +38,6 @@ EXTERN_C VOID pHookfunc(int *rcx_ptr, int *rdx_ptr, int *r8_ptr, int *r9_ptr, vo
     printf("stack arg1: %d\n", stack_arg1);
 }
 
-#pragma optimize("", off)
 int main()
 {
     int result = myfunction(1, 2, 3, 4, 5);
@@ -61,19 +47,19 @@ int main()
     if (MH_Initialize() != MH_OK)
     {
         printf("failed #1\n");
-        return TRUE;
+        return 1;
     }
 
     if (MH_CreateHook(myfunction, tailStub, &pOriginal) != MH_OK)
     {
         printf("failed #2\n");
-        return TRUE;
+        return 1;
     }
 
     if (MH_EnableHook(myfunction) != MH_OK)
     {
         printf("failed #3\n");
-        return TRUE;
+        return 1;
     }
 
     result = myfunction(1, 2, 3, 4, 5);
