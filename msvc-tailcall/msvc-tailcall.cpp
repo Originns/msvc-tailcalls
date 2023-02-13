@@ -29,19 +29,19 @@ EXTERN_C __declspec(noinline) int myfunction(int a1, int a2, int a3, int a4, int
 EXTERN_C VOID tailStub();
 EXTERN_C LPVOID pOriginal = NULL;
 
-EXTERN_C VOID pHookfunc(int* rcx_ptr, int* rdx_ptr, int* r8_ptr, int* r9_ptr, void* rsp,
-    void* ret_addr, int rcx, int rdx, int r8, int r9, int stack_arg1)
+EXTERN_C VOID pHookfunc(int *rcx_ptr, int *rdx_ptr, int *r8_ptr, int *r9_ptr, void *rsp,
+                        void *ret_addr, int rcx, int rdx, int r8, int r9, int stack_arg1)
 {
-	printf("rcx ptr value: %d\n", *rcx_ptr);
-	printf("rdx ptr value: %d\n", *rdx_ptr);
-	printf("r8 ptr value: %d\n", *r8_ptr);
-	printf("r9 ptr value: %d\n", *r9_ptr);
+    printf("rcx ptr value: %d\n", *rcx_ptr);
+    printf("rdx ptr value: %d\n", *rdx_ptr);
+    printf("r8 ptr value: %d\n", *r8_ptr);
+    printf("r9 ptr value: %d\n", *r9_ptr);
 
     *rcx_ptr = 9;
-	
-	printf("rsp: %p\n", rsp);
-	printf("ret from rsp: %p\n", *(LPVOID*)rsp);
-	
+
+    printf("rsp: %p\n", rsp);
+    printf("ret from rsp: %p\n", *(LPVOID *)rsp);
+
     printf("ret addr: %p\n", ret_addr);
 
     printf("rcx: %d\n", rcx);
@@ -51,7 +51,7 @@ EXTERN_C VOID pHookfunc(int* rcx_ptr, int* rdx_ptr, int* r8_ptr, int* r9_ptr, vo
     printf("stack arg1: %d\n", stack_arg1);
 }
 
-#pragma optimize( "", off )
+#pragma optimize("", off)
 int main()
 {
     int result = myfunction(1, 2, 3, 4, 5);
@@ -82,4 +82,4 @@ int main()
 
     return 0;
 }
-#pragma optimize( "", on )
+#pragma optimize("", on)
