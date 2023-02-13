@@ -58,7 +58,6 @@ int main()
 
     printf("myfunction: %d\n", result);
 
-    // hook myfunction
     if (MH_Initialize() != MH_OK)
     {
         printf("failed #1\n");
@@ -80,8 +79,6 @@ int main()
     result = myfunction(1, 2, 3, 4, 5);
 
     printf("hooked myfunction: %d\n", result);
-
-    printf("\n\n\n\n\n\n\n\n\n\n\n");
 
     return 0;
 }

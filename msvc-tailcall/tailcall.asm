@@ -10,15 +10,15 @@ tailStub proc
     mov [rsp + 18h], r8
     mov [rsp + 20h], r9
 
-	lea rcx, [rsp + 8h]
-	lea rdx, [rsp + 10h]
-	lea r8, [rsp + 18h]
-	lea r9, [rsp + 20h]
-    
-	push rsp
-	
+    lea rcx, [rsp + 8h]
+    lea rdx, [rsp + 10h]
+    lea r8, [rsp + 18h]
+    lea r9, [rsp + 20h]
+
+    push rsp
+
     sub rsp, 20h
-    
+
     call pHookfunc
 
     add rsp, 28h
