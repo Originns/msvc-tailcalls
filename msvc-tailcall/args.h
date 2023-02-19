@@ -7,7 +7,7 @@ template <typename Ret, std::size_t N>
 class Arguments {
 public:
     template <typename T>
-    T* get(std::size_t index) {
+    inline T* get(std::size_t index) {
         if (index >= N) return nullptr;
         if (sizeof(Ret) > sizeof(std::uint64_t))
         {
