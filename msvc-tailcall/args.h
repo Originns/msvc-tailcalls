@@ -7,12 +7,13 @@ template <typename Ret, std::size_t N>
 class Arguments {
 public:
     template <typename T>
-    inline T* get(std::size_t index) {
+    __forceinline T* get(std::size_t index) {
         if (index >= N) return nullptr;
         if (sizeof(Ret) > sizeof(std::uint64_t))
         {
             // return value of anything larger than 8 bytes 
-            // will instead be passed as pointer in rcx
+            // will instead be caller allocated and
+            // passed as pointer in rcx
             index++;
         }
 
