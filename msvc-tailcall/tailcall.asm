@@ -4,27 +4,87 @@ extrn pHookfunc : proc
 .code
 
 tailStub proc
-    ; backup register arguments in shadow space
-    mov [rsp + 8h], rcx
-    mov [rsp + 10h], rdx
-    mov [rsp + 18h], r8
-    mov [rsp + 20h], r9
+    ; save general purpose register arguments in shadow space, push xmm registers
+    ;
+    ;     _______________________
+    ;    |          ...          |
+    ;    |_______________________| <----- hook stackframe begin ^
+    ;    |                       |
+    ;    |        padding        |
+    ;    |_______________________|  ____
+    ;    |                       |      |
+    ;    |         xmm0d         |      |
+    ;    |_______________________|      |
+    ;    |                       |      |
+    ;    |         xmm1d         |      |
+    ;    |_______________________|      | 32 bytes for lower halves of xmm registers
+    ;    |                       |      |
+    ;    |         xmm2d         |      |
+    ;    |_______________________|      |
+    ;    |                       |      |
+    ;    |         xmm3d         |      |
+    ;    |_______________________|  ____| <--- rsp at function begin
+    ;    |                       |
+    ;    |       ret address     |
+    ;    |_______________________|  ____  <--- 16 byte alignment
+    ;    |                       |      |
+    ;    |          rcx          |      |
+    ;    |_______________________|      |
+    ;    |                       |      |
+    ;    |          rdx          |      |
+    ;    |_______________________|      | shadowspace
+    ;    |                       |      |
+    ;    |          r8           |      |
+    ;    |_______________________|      |
+    ;    |                       |      |
+    ;    |          r9           |      |
+    ;    |_______________________|  ____|
+    ;    |                       |
+    ;    |  arguments on stack   |
+    ;    |_______________________| <----- our stackframe begin ^
+    ;    |          ...          |
+    ;    |_______________________|
+    ;
+    ;
 
-    lea rcx, [rsp + 8h]
+    ; backup general purpose register passed arguments in shadowspace
+    mov     qword ptr[rsp + 8h], rcx
+    mov     qword ptr[rsp + 10h], rdx
+    mov     qword ptr[rsp + 18h], r8
+    mov     qword ptr[rsp + 20h], r9
     
-    sub rsp, 28h
-	
-    call pHookfunc
+    ; make space for shadowspace and xmm registers
+    sub     rsp, 48h
 
-    add rsp, 28h
+    ; backup xmm registers
+    movsd   qword ptr[rsp + 28h], xmm0
+    movsd   qword ptr[rsp + 30h], xmm1
+    movsd   qword ptr[rsp + 38h], xmm2
+    movsd   qword ptr[rsp + 40h], xmm3
 
-    mov r9, [rsp + 20h]
-    mov r8, [rsp + 18h]
-    mov rdx, [rsp + 10h]
-    mov rcx, [rsp + 8h]
+    ; pass pointer to stack
+    lea     rcx, [rsp + 28h]
+    
+    ; call hook
+    call    pHookfunc
 
-    jmp pOriginal
-    int 3
+    ; restore xmm registers
+    movsd   xmm3, qword ptr[rsp + 40h]
+    movsd   xmm2, qword ptr[rsp + 38h]
+    movsd   xmm1, qword ptr[rsp + 30h]
+    movsd   xmm0, qword ptr[rsp + 28h]
+
+    ; tear down stack frame
+    add     rsp, 48h
+
+    ; restore general purpose register arguments
+    mov     r9, qword ptr[rsp + 20h]
+    mov     r8, qword ptr[rsp + 18h]
+    mov     rdx, qword ptr[rsp + 10h]
+    mov     rcx, qword ptr[rsp + 8h]
+
+    jmp     pOriginal
+    int     3
 tailStub endp
 
 end

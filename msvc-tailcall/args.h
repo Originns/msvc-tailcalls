@@ -3,23 +3,34 @@
 #include <cstring>
 #include <type_traits>
 
-template <std::size_t N>
+template <typename Ret, std::size_t N>
 class Arguments {
 public:
     template <typename T>
     T* get(std::size_t index) {
-        static_assert(sizeof(T) <= sizeof(std::uint64_t), "Type must not be larger than 8 bytes");
         if (index >= N) return nullptr;
+        if (sizeof(Ret) > sizeof(std::uint64_t))
+        {
+            // return value of anything larger than 8 bytes 
+            // will instead be passed as pointer in rcx
+            index++;
+        }
+
+        if (index <= 3 && std::is_floating_point<T>::value)
+        {
+            return reinterpret_cast<T*>(&xmmdata[index]);
+        }
+
+        if (sizeof(T) > sizeof(std::uint64_t))
+        {
+            return *reinterpret_cast<T**>(&data_[index]);
+        }
+
         return reinterpret_cast<T*>(&data_[index]);
     }
 
-    template <typename T>
-    void set(std::size_t index, T value) {
-        static_assert(sizeof(T) <= sizeof(std::uint64_t), "Type must not be larger than 8 bytes");
-        if (index >= N) return;
-        *reinterpret_cast<T*>(&data_[index]) = value;
-    }
-
 private:
+    std::uint64_t xmmdata[4];
+    std::uint64_t reserved; // callees return address
     std::uint64_t data_[N];
 };
