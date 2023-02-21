@@ -52,18 +52,18 @@ __declspec(noinline) float mydoubletime(double a, float b)
 
 EXTERN_C VOID pHookfunc(Arguments<int, 5> *args)
 {
-    printf("rcx value: %d\n", *args->get<int>(0));
-    printf("rdx value: %d\n", *args->get<int>(1));
-    printf("r8 value: %d\n", *args->get<int>(2));
-    printf("r9 value: %d\n", *args->get<int>(3));
-    printf("stack value: %d\n", *args->get<int>(4));
+    printf("rcx value: %d\n", *args->get<int, 0>());
+    printf("rdx value: %d\n", *args->get<int, 1>());
+    printf("r8 value: %d\n", *args->get<int, 2>());
+    printf("r9 value: %d\n", *args->get<int, 3>());
+    printf("stack value: %d\n", *args->get<int, 4>());
 
-    printf("floating point value 1: %f\n", *args->get<float>(0));
-    printf("floating point value 2: %f\n", *args->get<float>(1));
+    printf("floating point value 1: %f\n", *args->get<float, 0>());
+    printf("floating point value 2: %f\n", *args->get<float, 1>());
 
-    *args->get<int>(0) = 9;
+    *args->get<int, 0>() = 9;
 
-    printf("rcx new value: %d\n", *args->get<int>(0));
+    printf("rcx new value: %d\n", *args->get<int, 0>());
 }
 
 int main()
