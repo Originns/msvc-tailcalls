@@ -5,7 +5,7 @@ extrn pHookfunc : proc
 
 tailStub proc
     ; save general purpose register arguments in shadow space, push xmm registers
-    ;
+    ;          lower address
     ;     _______________________
     ;    |          ...          |
     ;    |_______________________| <----- hook stackframe begin ^
@@ -40,11 +40,11 @@ tailStub proc
     ;    |          r9           |      |
     ;    |_______________________|  ____|
     ;    |                       |
-    ;    |  arguments on stack   |
+    ;    | arguments on stack v  |
     ;    |_______________________| <----- our stackframe begin ^
     ;    |          ...          |
     ;    |_______________________|
-    ;
+    ;          higher address
     ;
 
     ; backup general purpose register passed arguments in shadowspace
@@ -53,7 +53,7 @@ tailStub proc
     mov     qword ptr[rsp + 18h], r8
     mov     qword ptr[rsp + 20h], r9
     
-    ; make space for shadowspace and xmm registers
+    ; allocate shadowspace + space for xmm registers
     sub     rsp, 48h
 
     ; backup xmm registers
