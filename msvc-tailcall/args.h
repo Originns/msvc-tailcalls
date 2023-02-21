@@ -48,6 +48,7 @@ public:
         return reinterpret_cast<T *>(&data_.at(real_index));
     }
 
+    // only if return value type is larger than 8 bytes, pretty useless anyway
     template <typename = std::enable_if_t<(type_size<Ret>::value > sizeof(std::uint64_t))>>
     inline Ret *get_return_value()
     {
