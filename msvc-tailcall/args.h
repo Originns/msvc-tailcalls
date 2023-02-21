@@ -26,7 +26,7 @@ public:
         static_assert(index < N, "Index out of bounds");
 
         // return value of anything larger than 8 bytes
-        // will instead be allocatedby the caller and
+        // will instead be allocated by the caller and
         // passed as pointer in rcx, so we need to
         // shift the arguments by one
         constexpr std::size_t real_index = (type_size<Ret>::value > sizeof(std::uint64_t)) ? (index + 1) : index;
