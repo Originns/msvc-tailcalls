@@ -36,6 +36,7 @@
 //     0xCC                                                      // int 3
 // };
 
+// random structs for the example
 typedef struct _example_struct
 {
     int a;
@@ -58,8 +59,8 @@ EXTERN_C VOID pHookfunc(Arguments<result_struct, 7> *args)
     printf("rcx value: %d\n", *args->get<int, 0>());
     printf("rdx value: %d\n", *args->get<int, 1>());
     printf("r8 value: %d\n", *args->get<int, 2>());
-    printf("xmm3 value: %d\n", *args->get<float, 3>());
-    printf("floating point stack value: %d\n", *args->get<float, 4>());
+    printf("xmm3 value: %f\n", *args->get<float, 3>());
+    printf("floating point stack value: %f\n", *args->get<float, 4>());
     printf("integer stack value: %d\n", *args->get<int, 5>());
 
     example_struct *g = args->get<example_struct, 6>();
@@ -78,10 +79,9 @@ EXTERN_C VOID pHookfunc(Arguments<result_struct, 7> *args)
     result->a = 10;
     result->b = 20;
 
+	// modify whatever
     args->get<example_struct, 6>()->a = 1337;
     *args->get<int, 0>() = 9;
-
-    printf("rcx new value: %d\n", *args->get<int, 0>());
 }
 
 #pragma optimize("", off)
@@ -101,7 +101,7 @@ int main()
 
     result_struct result = myfunction(1, 2, 3, 4.5, -1.5, 6, g);
 
-    printf("myfunction: { %d, %d }\n", result.a, result.b);
+    printf("myfunction: { %lld, %lld }\n", result.a, result.b);
 
     if (MH_Initialize() != MH_OK)
     {
@@ -123,7 +123,7 @@ int main()
 
     result_struct result2 = myfunction(1, 2, 3, 4.5, -1.5, 6, g);
 
-    printf("hooked myfunction: { %d, %d }\n", result2.a, result2.b);
+    printf("hooked myfunction: { %lld, %lld }\n", result2.a, result2.b);
 
     return 0;
 }
