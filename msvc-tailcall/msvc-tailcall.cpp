@@ -36,42 +36,72 @@
 //     0xCC                                                      // int 3
 // };
 
+typedef struct _example_struct
+{
+    int a;
+    int b;
+    int c;
+    int d;
+} example_struct;
+
+typedef struct _result_struct
+{
+    long long a;
+    long long b;
+} result_struct;
+
 EXTERN_C VOID tailStub();
 EXTERN_C LPVOID pOriginal = NULL;
 
-#pragma optimize("", off)
-EXTERN_C __declspec(noinline) int myfunction(int a1, int a2, int a3, int a4, int a5)
-{
-    return a1 + a2 + a3 + a4 + a5;
-}
-
-__declspec(noinline) float mydoubletime(double a, float b)
-{
-    return (float)a - b;
-}
-
-EXTERN_C VOID pHookfunc(Arguments<int, 5> *args)
+EXTERN_C VOID pHookfunc(Arguments<result_struct, 7> *args)
 {
     printf("rcx value: %d\n", *args->get<int, 0>());
     printf("rdx value: %d\n", *args->get<int, 1>());
     printf("r8 value: %d\n", *args->get<int, 2>());
-    printf("r9 value: %d\n", *args->get<int, 3>());
-    printf("stack value: %d\n", *args->get<int, 4>());
+    printf("xmm3 value: %d\n", *args->get<float, 3>());
+    printf("floating point stack value: %d\n", *args->get<float, 4>());
+    printf("integer stack value: %d\n", *args->get<int, 5>());
 
-    printf("floating point value 1: %f\n", *args->get<float, 0>());
-    printf("floating point value 2: %f\n", *args->get<float, 1>());
+    example_struct *g = args->get<example_struct, 6>();
+    printf("struct values:\na: %d\nb: %d\nc: %d\nd: %d\n", g->a, g->b, g->c, g->d);
 
+    // no idea why you would need this as values will
+    // be overwritten by the original function anyway
+    // but it's here if you need it.
+    // note that this is stack allocated by the caller,
+    // don't try to access it later on.
+    result_struct *result = args->get_return_value();
+
+    // uninitialized stack stuff
+    printf("return values:\na: %lld\nb: %lld\n", result->a, result->b);
+
+    result->a = 10;
+    result->b = 20;
+
+    args->get<example_struct, 6>()->a = 1337;
     *args->get<int, 0>() = 9;
 
     printf("rcx new value: %d\n", *args->get<int, 0>());
 }
 
+#pragma optimize("", off)
+__declspec(noinline) result_struct myfunction(int a, int b, int c, float d, float e, int f, example_struct g)
+{
+    if (d > 10 || e > 8)
+    {
+        return {0, 0};
+    }
+
+    return {a + b + c - f, g.a + g.b + g.c - g.d};
+}
+
 int main()
 {
+    example_struct g = {3, 1, 2, 4};
 
-    int result = myfunction(1, 2, 3, 4, 5);
+    result_struct result = myfunction(1, 2, 3, 4.5, -1.5, 6, g);
 
-    printf("myfunction: %d\n", result);
+    printf("myfunction: { %d, %d }\n", result.a, result.b);
 
     if (MH_Initialize() != MH_OK)
     {
@@ -91,13 +121,9 @@ int main()
         return 1;
     }
 
-    printf("%f\n", mydoubletime(1337.1337, 1.f));
+    result_struct result2 = myfunction(1, 2, 3, 4.5, -1.5, 6, g);
 
-    mydoubletime(1337.1337, 1.f);
-
-    result = myfunction(1, 2, 3, 4, 5);
-
-    printf("hooked myfunction: %d\n", result);
+    printf("hooked myfunction: { %d, %d }\n", result2.a, result2.b);
 
     return 0;
 }
